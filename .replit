@@ -2,5 +2,9 @@ language = "nodejs"
 run = "node bot.js"
 
 [[ports]]
+localPort = 3000
+externalPort = 3000
+
+[[ports]]
 localPort = 3001
 externalPort = 80

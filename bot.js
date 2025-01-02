@@ -8,6 +8,7 @@ const schedule = require('node-schedule');
 const { updateUserXP } = require('./scripts/commands/rank');
 const fetch = require('node-fetch');
 const { newChatMemberEvent } = require('./scripts/events/welcome.js');
+const express = require('express');
 
 const configPath = path.join(__dirname, 'config.json');
 const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
@@ -35,11 +36,9 @@ for (const file of commandFiles) {
 }
 global.commands = commands;
 
-
 console.log(chalk.blue(`Total commands: ${commandFiles.length}`));
 console.log(chalk.green(`Successfully loaded: ${loadedCommands}`));
 console.log(chalk.red(`Failed to load: ${failedCommands}`));
-
 
 async function displayAdminNames() {
   const adminIds = Array.isArray(global.config.ADMIN_IDS)
@@ -63,7 +62,6 @@ async function displayAdminNames() {
   }
 }
 
-// Function to check for updates
 // Function to check for updates
 async function checkVersion() {
   try {
@@ -120,7 +118,6 @@ async function startBot() {
       );
     }
 
-
     if (!text.startsWith(prefix)) return;
 
     const args = text.slice(prefix.length).trim().split(/ +/);
@@ -145,7 +142,6 @@ async function startBot() {
       ).catch(error => console.error('Error sending level up message:', error));
     }
 
-
     if (chatType === 'group' || chatType === 'supergroup') {
       await db.collection('groups').updateOne(
         { groupId: msg.chat.id },
@@ -162,6 +158,20 @@ async function startBot() {
   });
 
   console.log(chalk.green('Bot is up and running!'));
+
+  // Start the website
+  const app = express();
+  const httpPort = 3000;
+
+  app.use(express.static(path.join(__dirname, 'website')));
+
+  app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'website', 'index.html'));
+  });
+
+  app.listen(httpPort, async () => {
+    console.log(chalk.green(`🌐 Website is running at http://localhost:${httpPort}`));
+  });
 }
 
 startBot().catch(error => {
