@@ -1,10 +1,9 @@
-﻿<img src="https://i.ibb.co.com/gDF63b8/nexalo.jpg" alt="Nexalo Bot Banner">
+﻿<img src="https://i.ibb.co.com/gDF63b8/nexalo.jpg" alt="XNIL6X Bot Banner">
 
-<center><h1>XNIL6X - Advanced Telegram Bot</h1></center>
+<center><h1>XNIL6X-BOT - Advanced Telegram Bot</h1></center>
 <p align="center">
 <img src="https://img.shields.io/badge/Node.js%20Support-20.x-blue" alt="Node.js Support">
-<img src="https://img.shields.io/badge/project_version-7ZHV92MN4L-red" alt="Project Version">
-<img src="https://img.shields.io/badge/code_version-1.0.0-yeelow" alt="Code Version">
+<img src="https://img.shields.io/badge/project_version-1.0.5-red" alt="Project Version">
 <img src="https://img.shields.io/badge/license-MIT-gray" alt="MIT LICENSE">
 </p>
 
@@ -12,13 +11,13 @@ A feature-rich Telegram bot built with Node.js that provides various utility, mo
 
 <p align="center">
   <a href="https://www.youtube.com/@bdnoobra" target="_blank">
-    <img src="https://i.ibb.co.com/LntSL4y/20241109-124517.png" alt="Nexalo Setup Tutorial" style="width:300px; height:80px; border-radius:10px;">
+    <img src="https://i.ibb.co.com/LntSL4y/20241109-124517.png" alt="XNIL6X-BOT Setup Tutorial" style="width:300px; height:80px; border-radius:10px;">
   </a>
     <a href="https://cmd.nexalo.xyz/" target="_blank">
-    <img src="https://i.ibb.co.com/DbzLFsN/20241109-124743.png" alt="Nexalo Setup Tutorial" style="width:300px; height:80px; border-radius:10px;">
+    <img src="https://i.ibb.co.com/DbzLFsN/20241109-124743.png" alt="XNIL6X-BOT Setup Tutorial" style="width:300px; height:80px; border-radius:10px;">
   </a>
-    <a href="https://t.me/nexalo" target="_blank">
-    <img src="https://i.ibb.co.com/YL5C4YX/20241109-124634.png" alt="Nexalo Setup Tutorial" style="width:300px; height:80px; border-radius:10px;">
+    <a href="https://t.me/xnil6xbot" target="_blank">
+    <img src="https://i.ibb.co.com/YL5C4YX/20241109-124634.png" alt="XNIL6X-BOTSetup Tutorial" style="width:300px; height:80px; border-radius:10px;">
   </a>
 </p>
 
@@ -54,7 +53,7 @@ A feature-rich Telegram bot built with Node.js that provides various utility, mo
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/1dev-hridoy/Nexalo.git
+git clone https://github.com/xnil6x404/Telebot-v1.git
 cd nexalo
 ```
 
@@ -63,26 +62,34 @@ cd nexalo
 npm install
 ```
 
-3. Rename a `example.env` To `.env` file in the root directory:
-```env
-BOT_TOKEN=YOUR_BOT_TOKEN
-OWNER_ID=OWNER_ID_HERE
-ADMIN_IDS=comma_separated_admin_ids
-MONGODB_URI=YOUR_MONGODB_URI
+3. SETUP `config.json`file:
+```
+
+{
+  "BOT_TOKEN": "YOUR_BOT_TOKEN",
+  "ADMIN_IDS": ["ADMIN_ID_HERE"],
+  "ADMIN_NAME": "BOT_ADMIN_NAME",
+  "prefix": ".",
+  "MONGO_URI": "YOUR_MONGODB_URI",
+  "DB_NAME": "MONGODB",
+  "LEVEL_UP_MESSAGE": "🎊 Congratulations, {username}! You've leveled up to {level}. Keep up the great work! 🎊",
+  "OWNER_ONLY_MESSAGE": "🚫 This command is restricted to the bot owner."
+}
 ```
 
 4. Start the bot:
 ```bash
-npm start
+node bot.js
 ```
 
 ## Configuration
 
-The bot uses environment variables for configuration. Create a `.env` file with the following variables:
+The bot uses environment variables for configuration. Create a `config.json` file with the following variables:
 
 - `BOT_TOKEN`: Your Telegram bot token
-- `MONGODB_URI`: MongoDB connection string
-- `OWNER_ID`: Your Telegram user ID (for owner-only commands)
+- `MONGO_URI`: MongoDB connection string
+- `DB_NAME` : Your Mongodb name
+- `ADMIN_IDS`: Your Telegram user ID (for owner-only commands)
 
 ## Command Structure
 
