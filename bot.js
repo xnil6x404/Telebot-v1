@@ -68,18 +68,18 @@ async function checkVersion() {
   try {
     const response = await fetch('https://raw.githubusercontent.com/xnil6x404/Telebotv1-version/refs/heads/main/update.json');
     const jsonData = await response.json();
-    const localVersion = fs.readFileSync(path.join(__dirname, 'version.txt'), 'utf8').trim();
+    const localVersion = fs.readFileSync(path.join(__dirname, 'vs.txt'), 'utf8').trim();
 
     if (jsonData.version !== localVersion) {
-      console.log(chalk.red.bold(`New update available! Current: ${localVersion}, New: ${jsonData.version}`));
-      process.exit(1);
+      console.log(chalk.yellow.bold(`⚠ New update available! Current: ${localVersion}, New: ${jsonData.version}`));
+      console.log(chalk.blue.bold('Bot will continue to run with the current version.'));
     } else {
       console.log(chalk.green.bold('You are up to date.'));
     }
   } catch (error) {
     console.error(chalk.red.bold('Error checking for updates.'));
     console.error(error);
-    process.exit(1);
+    console.log(chalk.blue.bold('Bot will continue to run despite update check failure.'));
   }
 }
 
