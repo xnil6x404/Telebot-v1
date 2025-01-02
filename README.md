@@ -1,6 +1,6 @@
 ﻿<img src="https://i.ibb.co.com/gDF63b8/nexalo.jpg" alt="Nexalo Bot Banner">
 
-<center><h1>Nexalo - xnil Advanced Telegram Bot</h1></center>
+<center><h1>XNIL6X - Advanced Telegram Bot</h1></center>
 <p align="center">
 <img src="https://img.shields.io/badge/Node.js%20Support-20.x-blue" alt="Node.js Support">
 <img src="https://img.shields.io/badge/project_version-7ZHV92MN4L-red" alt="Project Version">
