@@ -1,6 +1,6 @@
 {
-  "name": "nexalo",
-  "version": "1.0.1",
+  "name": "telebot-v1",
+  "version": "1.0.2",
   "main": "bot.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
