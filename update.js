@@ -15,7 +15,7 @@ function ensurePackageInstalled(packageName) {
 ensurePackageInstalled('axios');
 ensurePackageInstalled('fs-extra');
 
-const REPO_URL = 'https://api.github.com/repos/xnil6x404/Telebotv1';
+const REPO_URL = 'https://api.github.com/repos/xnil6x404/Telebot-v1';
 const MAIN_BRANCH = 'main';
 
 const PROJECT_PATH = path.resolve(__dirname);
@@ -105,7 +105,7 @@ async function updateProject() {
   for (const file of changedFiles) {
     if (file.type === 'blob') {
       const localPath = path.join(PROJECT_PATH, file.path);
-      const rawUrl = `https://raw.githubusercontent.com/xnil6x404/Telebotv1/${MAIN_BRANCH}/${file.path}`;
+      const rawUrl = `https://raw.githubusercontent.com/xnil6x404/Telebot-v1/${MAIN_BRANCH}/${file.path}`;
 
       console.log(`Updating file: ${file.path}`);
       await fs.ensureDir(path.dirname(localPath));
