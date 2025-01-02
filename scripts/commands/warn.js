@@ -1,6 +1,7 @@
 const { MongoClient } = require('mongodb');
 
-const mongoClient = new MongoClient(process.env.MONGODB_URI);
+// সঠিকভাবে MONGO_URI ব্যবহার করুন
+const mongoClient = new MongoClient(global.config.MONGO_URI);
 
 module.exports = {
   name: 'warn',
@@ -16,21 +17,32 @@ module.exports = {
       const warningsCollection = db.collection('warnings');
 
       let userId, username, reason;
-      
+
+      // যখন একটি মেসেজে রিপ্লাই করা হয়
       if (msg.reply_to_message) {
         userId = msg.reply_to_message.from.id;
         username = msg.reply_to_message.from.username || msg.reply_to_message.from.first_name;
         reason = args.join(' ') || 'No reason provided';
-      } else if (args.length > 0) {
+      } 
+      // যখন @username দিয়ে ওয়ার্ন করার চেষ্টা করা হয়
+      else if (args.length > 0) {
         username = args[0].replace('@', '');
         try {
-          const chatMember = await bot.getChatMember(msg.chat.id, username);
-          userId = chatMember.user.id;
+          const chatMembers = await bot.getChatAdministrators(msg.chat.id);
+          const user = chatMembers.find((member) => member.user.username === username);
+
+          if (!user) {
+            return bot.sendMessage(msg.chat.id, 'Unable to find the specified user.');
+          }
+          userId = user.user.id;
         } catch (error) {
+          console.error('Error finding user:', error);
           return bot.sendMessage(msg.chat.id, 'Unable to find the specified user.');
         }
         reason = args.slice(1).join(' ') || 'No reason provided';
-      } else {
+      } 
+      // যদি ইউজার বা রিপ্লাই না করা হয়
+      else {
         return bot.sendMessage(msg.chat.id, 'Please reply to a message or provide a username to warn.');
       }
 
@@ -46,15 +58,16 @@ module.exports = {
 
       const warningCount = await warningsCollection.countDocuments({ userId, chatId: msg.chat.id });
 
-      let response = `User ${username} has been warned.\nReason: ${reason}\nTotal warnings: ${warningCount}`;
+      let response = `⚠ User ${username} has been warned.\nReason: ${reason}\nTotal warnings: ${warningCount}`;
 
+      // যদি ওয়ার্নিং ৩ বা তার বেশি হয়
       if (warningCount >= 3) {
         try {
-          await bot.kickChatMember(msg.chat.id, userId);
-          response += '\nUser has been banned due to exceeding warning limit.';
+          await bot.banChatMember(msg.chat.id, userId);
+          response += '\n🚫 User has been banned due to exceeding warning limit.';
         } catch (error) {
           console.error('Error banning user:', error);
-          response += '\nFailed to ban user. Please check bot permissions.';
+          response += '\n❌ Failed to ban user. Please check bot permissions.';
         }
       }
 

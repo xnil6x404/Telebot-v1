@@ -3,7 +3,7 @@ const { MongoClient } = require('mongodb');
 const { ObjectId } = require('mongodb');
 
 // MongoDB connection setup
-const uri = process.env.MONGODB_URI;
+const uri = global.config.MONGO_URI;
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
 
 async function connectToDatabase() {
