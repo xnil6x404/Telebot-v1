@@ -3,7 +3,7 @@ const fs = require('fs-extra');
 const path = require('path');
 const execSync = require('child_process').execSync;
 
-
+// Ensure necessary packages are installed
 function ensurePackageInstalled(packageName) {
   try {
     require.resolve(packageName);
@@ -21,6 +21,7 @@ const MAIN_BRANCH = 'main';
 const PROJECT_PATH = path.resolve(__dirname);
 const BACKUP_PATH = path.resolve(__dirname, 'backup');
 
+// Fetch the latest commit SHA
 async function getLatestCommitSha() {
   try {
     const response = await axios.get(`${REPO_URL}/commits/${MAIN_BRANCH}`);
@@ -31,6 +32,7 @@ async function getLatestCommitSha() {
   }
 }
 
+// Get list of changed files
 async function getChangedFiles(sha) {
   try {
     const response = await axios.get(`${REPO_URL}/git/trees/${sha}?recursive=1`);
@@ -41,6 +43,7 @@ async function getChangedFiles(sha) {
   }
 }
 
+// Backup a specific file
 async function backupFile(filePath, version) {
   const relativePath = path.relative(PROJECT_PATH, filePath);
   const backupDir = path.join(BACKUP_PATH, version, path.dirname(relativePath));
@@ -50,6 +53,7 @@ async function backupFile(filePath, version) {
   await fs.copy(filePath, backupFilePath);
 }
 
+// Update a specific file
 async function updateFile(filePath, rawUrl) {
   try {
     const response = await axios.get(rawUrl, { responseType: 'stream' });
@@ -66,6 +70,7 @@ async function updateFile(filePath, rawUrl) {
   }
 }
 
+// Main update function
 async function updateProject() {
   console.log('Checking for updates...');
 
@@ -90,18 +95,22 @@ async function updateProject() {
   console.log('Fetching changes from GitHub...');
   const changedFiles = await getChangedFiles(latestSha);
 
-  console.log(`Backing up current version: ${currentVersion || 'initial'}...`);
+  console.log(`Backing up changed files from version: ${currentVersion || 'initial'}...`);
   for (const file of changedFiles) {
     if (file.type === 'blob') {
       const localPath = path.join(PROJECT_PATH, file.path);
+
+      // Check if the file already exists locally
       if (fs.existsSync(localPath)) {
         console.log(`Backing up: ${localPath}`);
         await backupFile(localPath, currentVersion || 'initial');
+      } else {
+        console.log(`New file detected: ${file.path}, no backup needed.`);
       }
     }
   }
 
-  console.log('Updating files...');
+  console.log('Updating changed files...');
   for (const file of changedFiles) {
     if (file.type === 'blob') {
       const localPath = path.join(PROJECT_PATH, file.path);
@@ -119,6 +128,7 @@ async function updateProject() {
   console.log('Project updated successfully!');
 }
 
+// Execute the update process
 updateProject().catch((error) => {
   console.error('Something went wrong during the update process:', error.message);
 });
