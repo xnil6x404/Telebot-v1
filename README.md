@@ -54,7 +54,7 @@ A feature-rich Telegram bot built with Node.js that provides various utility, mo
 1. Clone the repository:
 ```bash
 git clone https://github.com/xnil6x404/Telebot-v1.git
-cd nexalo
+cd Telebot-v1
 ```
 
 2. Install dependencies:
