@@ -70,6 +70,45 @@ async function updateFile(filePath, rawUrl) {
   }
 }
 
+// Update only changed or new files
+async function updateChangedFiles(changedFiles, currentVersion) {
+  console.log('Updating only changed or new files...');
+
+  for (const file of changedFiles) {
+    if (file.type === 'blob') {
+      const localPath = path.join(PROJECT_PATH, file.path);
+      const rawUrl = `https://raw.githubusercontent.com/xnil6x404/Telebot-v1/${MAIN_BRANCH}/${file.path}`;
+
+      // Check if the file exists locally
+      if (fs.existsSync(localPath)) {
+        const localContent = fs.readFileSync(localPath, 'utf-8');
+        try {
+          const response = await axios.get(rawUrl);
+          const remoteContent = response.data;
+
+          // Compare file content
+          if (localContent === remoteContent) {
+            console.log(`No changes in: ${file.path}`);
+            continue; // Skip unchanged files
+          } else {
+            console.log(`File changed: ${file.path}`);
+            await backupFile(localPath, currentVersion || 'initial'); // Backup the file
+          }
+        } catch (error) {
+          console.error(`Failed to fetch remote content for ${file.path}:`, error.message);
+          continue;
+        }
+      } else {
+        console.log(`New file detected: ${file.path}`);
+      }
+
+      console.log(`Updating file: ${file.path}`);
+      await fs.ensureDir(path.dirname(localPath));
+      await updateFile(localPath, rawUrl);
+    }
+  }
+}
+
 // Main update function
 async function updateProject() {
   console.log('Checking for updates...');
@@ -95,32 +134,8 @@ async function updateProject() {
   console.log('Fetching changes from GitHub...');
   const changedFiles = await getChangedFiles(latestSha);
 
-  console.log(`Backing up changed files from version: ${currentVersion || 'initial'}...`);
-  for (const file of changedFiles) {
-    if (file.type === 'blob') {
-      const localPath = path.join(PROJECT_PATH, file.path);
-
-      // Check if the file already exists locally
-      if (fs.existsSync(localPath)) {
-        console.log(`Backing up: ${localPath}`);
-        await backupFile(localPath, currentVersion || 'initial');
-      } else {
-        console.log(`New file detected: ${file.path}, no backup needed.`);
-      }
-    }
-  }
-
-  console.log('Updating changed files...');
-  for (const file of changedFiles) {
-    if (file.type === 'blob') {
-      const localPath = path.join(PROJECT_PATH, file.path);
-      const rawUrl = `https://raw.githubusercontent.com/xnil6x404/Telebot-v1/${MAIN_BRANCH}/${file.path}`;
-
-      console.log(`Updating file: ${file.path}`);
-      await fs.ensureDir(path.dirname(localPath));
-      await updateFile(localPath, rawUrl);
-    }
-  }
+  console.log(`Backing up and updating files from version: ${currentVersion || 'initial'}...`);
+  await updateChangedFiles(changedFiles, currentVersion);
 
   console.log('Saving new version...');
   fs.writeFileSync(versionFile, latestSha);

@@ -1,0 +1,7 @@
+language = "nodejs"
+run = "node bot.js"
+modules = ["nodejs-20"]
+
+[[ports]]
+localPort = 3001
+externalPort = 80
