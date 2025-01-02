@@ -43,7 +43,7 @@ module.exports = {
       const finalMessage = `${commandList}
 ╭───✿ SUPPORT GC
 │If you don't know how to
-│use Nexalo or face any
+│use xnil6x or face any
 │problem then please join
 │our Support GC by clicking
 │the button below.
@@ -55,7 +55,7 @@ module.exports = {
 
       const keyboard = {
         inline_keyboard: [
-          [{ text: 'Join Support Group', url: 'https://t.me/example_support_group' }]
+          [{ text: 'Join Support Group', url: 'https://t.me/botzoneofficial1' }]
         ]
       };
 
