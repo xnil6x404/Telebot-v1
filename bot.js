@@ -64,6 +64,7 @@ async function displayAdminNames() {
 }
 
 // Function to check for updates
+// Function to check for updates
 async function checkVersion() {
   try {
     const response = await fetch('https://raw.githubusercontent.com/xnil6x404/Telebotv1-version/refs/heads/main/update.json');
@@ -119,7 +120,7 @@ async function startBot() {
       );
     }
 
-    
+
     if (!text.startsWith(prefix)) return;
 
     const args = text.slice(prefix.length).trim().split(/ +/);
@@ -144,7 +145,7 @@ async function startBot() {
       ).catch(error => console.error('Error sending level up message:', error));
     }
 
-    
+
     if (chatType === 'group' || chatType === 'supergroup') {
       await db.collection('groups').updateOne(
         { groupId: msg.chat.id },
