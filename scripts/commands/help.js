@@ -29,14 +29,26 @@ module.exports = {
       return emojiMap[category] || '❓';
     };
 
+    // Chunk Array Function: Split array into smaller chunks
+    const chunkArray = (array, size) => {
+      const chunks = [];
+      for (let i = 0; i < array.length; i += size) {
+        chunks.push(array.slice(i, i + size));
+      }
+      return chunks;
+    };
+
     // Generate the main menu
     const createMainMenu = () => ({
       reply_markup: JSON.stringify({
         inline_keyboard: [
-          ...categories.map(category => [{
-            text: `${getCategoryEmoji(category)} ${category}`,
-            callback_data: `help_category_${category}`
-          }]),
+          ...chunkArray(
+            categories.map(category => ({
+              text: `${getCategoryEmoji(category)} ${category}`,
+              callback_data: `help_category_${category}`
+            })),
+            4 // Each row will have 4 buttons
+          ),
           [{ text: '🔍 Search Commands', callback_data: 'help_search' }],
           [{ text: 'ℹ️ About', callback_data: 'help_about' }]
         ]
@@ -47,9 +59,15 @@ module.exports = {
     const createCategoryMenu = (category) => ({
       reply_markup: JSON.stringify({
         inline_keyboard: [
-          ...Object.entries(commands)
-            .filter(([_, cmd]) => cmd.category === category)
-            .map(([name]) => [{ text: `/${name}`, callback_data: `help_command_${name}` }]),
+          ...chunkArray(
+            Object.entries(commands)
+              .filter(([_, cmd]) => cmd.category === category)
+              .map(([name]) => ({
+                text: `/${name}`,
+                callback_data: `help_command_${name}`
+              })),
+            3 // Each row will have 4 buttons
+          ),
           [{ text: '🔙 Back to Categories', callback_data: 'help_main' }]
         ]
       })
