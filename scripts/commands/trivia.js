@@ -7,7 +7,7 @@ module.exports = {
   ownerOnly: false,
   category: 'Games',
   description: 'Start a trivia game and earn coins',
-  guide: 'Use /trivia to start a trivia game',
+  guide: `Use ${global.config.prefix}trivia to start a trivia game`,
   execute: async (bot, msg, args, db) => {
     const chatId = msg.chat.id;
     const userId = msg.from.id;

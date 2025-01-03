@@ -2,7 +2,7 @@
   "BOT_TOKEN": "7776952501:AAFKshVxUkb6vy0cfOkIPxJjR4XHO9YrLdI",
   "ADMIN_IDS": ["5929504859"],
   "ADMIN_NAME": "XNIL",
-  "prefix": ".",
+  "prefix": "/",
   "MONGO_URI": "mongodb+srv://xnil6x143:HaogAjelhhZehn5i@cluster0.htr4b.mongodb.net/xnil?retryWrites=true&w=majority&appName=Cluster0",
   "DB_NAME": "xnil",
   "LEVEL_UP_MESSAGE": "🎊 Congratulations, {username}! You've leveled up to {level}. Keep up the great work! 🎊",

@@ -63,7 +63,7 @@ module.exports = {
             Object.entries(commands)
               .filter(([_, cmd]) => cmd.category === category)
               .map(([name]) => ({
-                text: `/${name}`,
+                text: `${global.config.prefix}${name}`,
                 callback_data: `help_command_${name}`
               })),
             3 // Each row will have 3 buttons
@@ -129,7 +129,7 @@ module.exports = {
           });
         }
       } else if (action === 'help_search') {
-        await bot.editMessageText('To search for a command, type /help <command_name>.', {
+        await bot.editMessageText(`To search for a command, ${global.config.prefix}type help <command_name>.`, {
           chat_id: chatId,
           message_id: messageId,
           reply_markup: JSON.stringify({
