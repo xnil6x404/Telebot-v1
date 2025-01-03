@@ -47,7 +47,7 @@ module.exports = {
               text: `${getCategoryEmoji(category)} ${category}`,
               callback_data: `help_category_${category}`
             })),
-            4 // Each row will have 4 buttons
+            3 // Each row will have 3 buttons
           ),
           [{ text: '🔍 Search Commands', callback_data: 'help_search' }],
           [{ text: 'ℹ️ About', callback_data: 'help_about' }]
@@ -66,7 +66,7 @@ module.exports = {
                 text: `/${name}`,
                 callback_data: `help_command_${name}`
               })),
-            3 // Each row will have 4 buttons
+            3 // Each row will have 3 buttons
           ),
           [{ text: '🔙 Back to Categories', callback_data: 'help_main' }]
         ]
