@@ -14,7 +14,7 @@ const configPath = path.join(__dirname, 'config.json');
 const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
 global.config = config; 
 
-const bot = new TelegramBot(config.BOT_TOKEN, { polling: true });
+const bot = new TelegramBot(global.config.BOT_TOKEN, { polling: true });
 global.bot = bot; 
 const commandsPath = path.join(__dirname, 'scripts/commands');
 const commandFiles = fs.readdirSync(commandsPath).filter(file => file.endsWith('.js'));
