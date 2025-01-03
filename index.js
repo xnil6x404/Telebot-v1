@@ -1,4 +1,6 @@
-require('dotenv').config();
+t is up and running!'));
+
+  require('dotenv').config();
 const TelegramBot = require('node-telegram-bot-api');
 const fs = require('fs');
 const path = require('path');
@@ -10,16 +12,12 @@ const fetch = require('node-fetch');
 const { newChatMemberEvent } = require('./scripts/events/welcome.js');
 const express = require('express');
 
-// Load configuration
 const configPath = path.join(__dirname, 'config.json');
 const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
-global.config = config;
+global.config = config; 
 
-// Initialize Telegram Bot
 const bot = new TelegramBot(global.config.BOT_TOKEN, { polling: true });
-global.bot = bot;
-
-// Load commands
+global.bot = bot; 
 const commandsPath = path.join(__dirname, 'scripts/commands');
 const commandFiles = fs.readdirSync(commandsPath).filter(file => file.endsWith('.js'));
 
@@ -44,11 +42,10 @@ console.log(chalk.blue(`Total commands: ${commandFiles.length}`));
 console.log(chalk.green(`Successfully loaded: ${loadedCommands}`));
 console.log(chalk.red(`Failed to load: ${failedCommands}`));
 
-// Display admin names
 async function displayAdminNames() {
   const adminIds = Array.isArray(global.config.ADMIN_IDS)
     ? global.config.ADMIN_IDS
-    : [global.config.ADMIN_IDS];
+    : [global.config.ADMIN_IDS]; 
 
   const adminNames = [];
   for (const adminId of adminIds) {
@@ -67,7 +64,7 @@ async function displayAdminNames() {
   }
 }
 
-// Check for updates
+// Function to check for updates
 async function checkVersion() {
   try {
     const response = await fetch('https://raw.githubusercontent.com/xnil6x404/Telebotv1-version/refs/heads/main/update.json');
@@ -81,60 +78,90 @@ async function checkVersion() {
       console.log(chalk.green.bold('You are up to date.'));
     }
   } catch (error) {
-    console.error(chalk.red.bold('Error checking for updates.'), error);
+    console.error(chalk.red.bold('Error checking for updates.'));
+    console.error(error);
     console.log(chalk.blue.bold('Bot will continue to run despite update check failure.'));
   }
 }
 
-// Start the bot
+// Starting the bot
 async function startBot() {
-  try {
-    await checkVersion();
+  await checkVersion();
 
-    const db = await connectToDatabase();
-    global.db = db;
+  const db = await connectToDatabase();
+  global.db = db;
 
-    // Schedule weekly reports
-    schedule.scheduleJob('0 0 * * 0', () => sendWeeklyReport(bot, db));
-    await displayAdminNames();
+  schedule.scheduleJob('0 0 * * 0', () => sendWeeklyReport(bot, db));
+  await displayAdminNames();
 
-    bot.on('message', async (msg) => {
-      try {
-        const text = msg.text || '';
-        const chatType = msg.chat.type;
-        const username = msg.from.username || msg.from.first_name || 'Unknown';
-        const time = new Date().toLocaleTimeString();
+  bot.on('message', async (msg) => {
+    const text = msg.text || '';
+    const chatType = msg.chat.type;
+    const username = msg.from.username || msg.from.first_name || 'Unknown';
+    const time = new Date().toLocaleTimeString();
 
-        console.log(chalk.yellow(`[${time}] ${chatType.toUpperCase()} - ${username}: ${text}`));
+    console.log(chalk.yellow(`[${time}] ${chatType.toUpperCase()} - ${username}: ${text}`));
 
-        const prefix = global.config.prefix;
-        if (!text.startsWith(prefix)) return;
+    const prefix = global.config.prefix;
+    const photoUrl = 'https://i.imgur.com/TblSU14.jpeg'; 
+    if (text.trim().toLowerCase() === 'prefix') {
+      return bot.sendPhoto(msg.chat.id, photoUrl, {
+        caption: `🔹 The current prefix is: \`${prefix}\`\nUse this prefix before commands. Example: \`${prefix}help\``
+      }).catch(error => {
+        console.error('Error sending photo:', error);
+        bot.sendMessage(msg.chat.id, '💔 Failed to send the prefix photo.');
+      });
+    }
 
-        const args = text.slice(prefix.length).trim().split(/ +/);
-        const commandName = args.shift().toLowerCase();
+    if (text.trim() === prefix) {
+      return bot.sendMessage(
+        msg.chat.id,
+        `🔹 Hi, ${username}! Please enter a command after the prefix. Example: ${prefix}help`
+      );
+    }
 
-        const command = global.commands[commandName];
-        if (!command) return;
+    if (!text.startsWith(prefix)) return;
 
-        await command.execute(bot, msg, args, db);
+    const args = text.slice(prefix.length).trim().split(/ +/);
+    const commandName = args.shift().toLowerCase();
 
-        // XP and leveling system
-        const { leveledUp, newLevel } = await updateUserXP(db, msg.from.id, username);
-        if (leveledUp) {
-          bot.sendMessage(
-            msg.chat.id,
-            `🎊 Congratulations, ${username}! You've leveled up to ${newLevel}. Keep up the great work! 🎊`
-          ).catch(error => console.error('Error sending level-up message:', error));
-        }
-      } catch (error) {
-        console.error('Error processing message:', error);
-        await bot.sendMessage(msg.chat.id, '💔 Something went wrong!');
-      }
-    });
+    const command = global.commands[commandName];
+    if (!command) return;
 
-    console.log(chalk.green('Bot is up and running!'));
+    try {
+      await command.execute(bot, msg, args, db);
+    } catch (error) {
+      console.error('Error executing command:', error);
+      await bot.sendMessage(msg.chat.id, '💔 Something went wrong!');
+    }
 
-    // Start the website
+    // XP and leveling system
+    const { leveledUp, newLevel } = await updateUserXP(db, msg.from.id, username);
+    if (leveledUp) {
+      bot.sendMessage(
+        msg.chat.id,
+        `🎊 Congratulations, ${username}! You've leveled up to ${newLevel}. Keep up the great work! 🎊`
+      ).catch(error => console.error('Error sending level up message:', error));
+    }
+
+    if (chatType === 'group' || chatType === 'supergroup') {
+      await db.collection('groups').updateOne(
+        { groupId: msg.chat.id },
+        { $set: { groupName: msg.chat.title } },
+        { upsert: true }
+      );
+
+      await db.collection('users').updateOne(
+        { userId: msg.from.id },
+        { $set: { groupId: msg.chat.id } },
+        { upsert: true }
+      );
+    }
+  });
+
+  console.log(chalk.green('Bot is up and running!'));
+
+// Start the website
     const app = express();
     const httpPort = process.env.PORT || 3000;
 
@@ -152,11 +179,7 @@ async function startBot() {
     app.listen(httpPort, () => {
       console.log(chalk.green(`🌐 Website is running at http://localhost:${httpPort}`));
     });
-  } catch (error) {
-    console.error(chalk.red('Fatal error during bot startup:'), error);
-    process.exit(1);
   }
-}
 
 startBot();
 newChatMemberEvent(bot);
